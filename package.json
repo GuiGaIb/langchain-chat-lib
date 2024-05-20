@@ -1,0 +1,32 @@
+{
+  "name": "langchain-chat-lib",
+  "version": "0.0.1",
+  "description": "Utilities library for chat applications with LangChain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuiGaIb/langchain-chat-lib.git"
+  },
+  "keywords": [
+    "langchain",
+    "ai",
+    "chat",
+    "chatbot",
+    "utils"
+  ],
+  "author": "Guillermo García Ibarra",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GuiGaIb/langchain-chat-lib/issues"
+  },
+  "homepage": "https://github.com/GuiGaIb/langchain-chat-lib#readme",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.1.50"
+  }
+}
