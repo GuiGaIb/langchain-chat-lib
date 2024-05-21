@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": true,
+    "outDir": "test-build",
+    "tsBuildInfoFile": "test-build/.tsbuildinfo"
+  },
+  "include": ["src/test/**/*.ts"]
+}
