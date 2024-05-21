@@ -37,8 +37,11 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@langchain/core": "^0.1.50",
+    "langchain": "^0.2.0",
     "rxjs": "^7.8.1",
     "zod": "^3.23.8"
+  },
+  "overrides": {
+    "@langchain/core": "0.2.0"
   }
 }
