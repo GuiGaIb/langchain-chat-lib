@@ -129,5 +129,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Build dir
+build/
+
 # Test build dir
 test-build/
