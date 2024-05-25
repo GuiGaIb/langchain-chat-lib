@@ -9,6 +9,9 @@
     "pretest": "npm run build:test",
     "test": "mocha test-build/**/*.test.js"
   },
+  "engines": {
+    "node": "20.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GuiGaIb/langchain-chat-lib.git"
