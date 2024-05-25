@@ -1,39 +1,71 @@
-import {
-  Schema,
-  Model,
-  HydratedDocument,
-  DefaultSchemaOptions,
-} from 'mongoose';
+import { Schema, Model, HydratedDocument } from 'mongoose';
 
-export type RequirementShape = {
-  name: string;
-  description: string;
-  createdAt: Date;
+import { getStringKeys } from '../../utils/string-keys.js';
+
+export const getRequirementSchema = <ReqNames extends string>(
+  options: RequirementDefinition<ReqNames>
+) => {
+  const reqNames = getStringKeys(options);
+  const schema: RequirementSchema<ReqNames> = new Schema({
+    name: {
+      type: Schema.Types.Mixed,
+      required: true,
+      enum: reqNames,
+      index: true,
+      unique: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    }
+  });
+
+  return schema;
 };
 
-export type Requirement = RequirementShape & Methods;
+export type RequirementDefinition<ReqNames extends string = string> = {
+  [name in ReqNames]: {
+    description: string;
+  };
+};
 
-export type RequirementDoc = HydratedDocument<
-  RequirementShape,
+export type RequirementShape<ReqNames extends string = string> = {
+  name: ReqNames;
+  description: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type Requirement<ReqNames extends string = string> =
+  Required<RequirementShape<ReqNames>> & Methods;
+
+export type RequirementDoc<ReqNames extends string = string> = HydratedDocument<
+  Required<RequirementShape<ReqNames>>,
   Overrides,
   QueryHelpers
 >;
-export type RequirementModel = Model<
-  RequirementShape,
+export type RequirementModel<ReqNames extends string = string> = Model<
+  Required<RequirementShape<ReqNames>>,
   QueryHelpers,
   Methods,
   Virtuals,
-  RequirementDoc
+  RequirementDoc<ReqNames>
 >;
-export type RequirementSchema = Schema<
-  RequirementShape,
-  RequirementModel,
+export type RequirementSchema<ReqNames extends string = string> = Schema<
+  Required<RequirementShape<ReqNames>>,
+  RequirementModel<ReqNames>,
   Methods,
   QueryHelpers,
   Virtuals,
   Statics,
-  SchemaOptions,
-  RequirementDoc
+  {
+    typeKey: 'type';
+    id: true;
+    _id: true;
+    timestamps: true;
+    versionKey: '__v';
+  },
+  RequirementDoc<ReqNames>
 >;
 
 type Methods = {};
@@ -42,6 +74,3 @@ type Virtuals = {};
 type QueryHelpers = {};
 
 type Overrides = Methods & Virtuals;
-type SchemaOptions = Omit<DefaultSchemaOptions, 'timestamps'> & {
-  timestamps: { createdAt: true, updatedAt: false };
-};
