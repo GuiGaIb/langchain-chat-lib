@@ -16,7 +16,7 @@ export function getStructuredOutputFixingParser<T extends z.ZodTypeAny>(
 ): OutputFixingParser<z.infer<T>> {
   const baseParser = StructuredOutputParser.fromZodSchema(schema);
   const llm = new OpenAI({
-    model: 'gpt-4o',
+    model: process.env['FIXING_OPENAI_MODEL'],
     temperature: 0,
   });
   return OutputFixingParser.fromLLM(llm, baseParser);
