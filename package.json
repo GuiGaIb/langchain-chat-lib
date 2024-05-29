@@ -40,6 +40,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@langchain/openai": "^0.0.34",
     "langchain": "^0.2.0",
     "mongoose": "^8.4.0",
     "rxjs": "^7.8.1",
