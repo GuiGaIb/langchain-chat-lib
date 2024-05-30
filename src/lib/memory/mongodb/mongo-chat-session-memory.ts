@@ -182,8 +182,9 @@ export class MongoChatSessionMemory
 
     await session.save();
 
+    const summarizedMessageIds = messages.map((msg) => msg._id);
     await this.ChatMessage.updateMany(
-      { _id: { $in: messageIds } },
+      { _id: { $in: summarizedMessageIds } },
       { summarized: true }
     );
   }
