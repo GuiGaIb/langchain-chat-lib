@@ -68,7 +68,57 @@ export function getOptionalNumEnv(
   }
   const num = Number(value);
   if (isNaN(num)) {
-    throw new Error(`Invalid number value for environment variable ${key}`);
+    throw new Error(`Invalid number value for environment variable "${key}"`);
   }
   return num;
+}
+
+/**
+ * Checks if an environment variable is set.
+ * @param key - The name of the environment variable.
+ * @throws if the environment variable is not set.
+ */
+export function checkEnv(key: string): void;
+
+/**
+ * Checks if an environment variable is set and passes a validation function.
+ * @param key - The name of the environment variable.
+ * @param validator - A function that returns true if the value is valid.
+ * @throws if the environment variable is not set or the validation function fails.
+ */
+export function checkEnv(
+  key: string,
+  validator: (value: string) => boolean
+): void;
+
+export function checkEnv(
+  key: string,
+  validator?: (value: string) => boolean
+): void {
+  const value = process.env[key];
+  if (value === undefined) {
+    throw new Error(`Environment variable "${key}" is not set`);
+  }
+  if (validator && !validator(value)) {
+    throw new Error(`Validation failed for environment variable "${key}"`);
+  }
+}
+
+/**
+ * Checks if an environment variable is set and passes an asynchronous validation function.
+ * @param key - The name of the environment variable.
+ * @param validator - An asynchronous function that returns true if the value is valid.
+ * @throws if the environment variable is not set or the validation function fails.
+ */
+export async function checkEnvAsync(
+  key: string,
+  validator: (value: string) => Promise<boolean>
+): Promise<void> {
+  const value = process.env[key];
+  if (value === undefined) {
+    throw new Error(`Environment variable "${key}" is not set`);
+  }
+  if (!(await validator(value))) {
+    throw new Error(`Validation failed for environment variable "${key}"`);
+  }
 }
