@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
 import { HumanMessage } from '@langchain/core/messages';
 
-import { MemoryBackedDebouncer } from '../lib/messages/memory-backed-debouncer.js';
+import { MemoryBackedDebouncer } from '../lib/utils/memory-backed-debouncer.js';
 
 describe('MemoryBackedDebouncer', function () {
   let clock: sinon.SinonFakeTimers;
