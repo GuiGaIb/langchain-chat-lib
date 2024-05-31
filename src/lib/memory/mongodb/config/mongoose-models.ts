@@ -3,6 +3,7 @@ export enum PredefinedMongooseModels {
   ChatSession = 'LCChat_ChatSession',
   ConversationStage = 'LCChat_ConversationStage',
   Service = 'LCChat_Service',
+  Knowledge = 'LCChat_Knowledge',
 }
 
 export const MONGOOSE_MODEL_NAMES = [
@@ -10,4 +11,5 @@ export const MONGOOSE_MODEL_NAMES = [
   PredefinedMongooseModels.ChatSession,
   PredefinedMongooseModels.ConversationStage,
   PredefinedMongooseModels.Service,
+  PredefinedMongooseModels.Knowledge,
 ] as const;
