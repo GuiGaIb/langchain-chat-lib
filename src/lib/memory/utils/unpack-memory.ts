@@ -26,7 +26,7 @@ const _coerceMemory: RunnableFunc<
 
 const coerceMemory = new RunnableLambda({ func: _coerceMemory }).withConfig({
   runName: 'coerceMemory',
-});
+}).withConfig({ runName: 'coerceMemory' });
 
 const unpackMemory = RunnableMap.from<
   LCRunOutput<typeof coerceMemory>,
