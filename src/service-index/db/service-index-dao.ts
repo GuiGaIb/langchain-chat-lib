@@ -3,9 +3,7 @@ import { createConnection } from 'mongoose';
 import { checkEnv } from '../../lib/config/env.js';
 import { ServiceModel, ServiceSchema } from './schemas/service.schema.js';
 import { PredefinedMongooseModels } from '../../lib/memory/mongodb/config/mongoose-models.js';
-
 import {
-  ConversationStageDoc,
   ConversationStageModel,
   ConversationStageSchema,
 } from './schemas/conversation-stage.schema.js';
