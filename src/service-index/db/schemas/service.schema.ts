@@ -64,6 +64,16 @@ ServiceSchema.static(
   }
 );
 
+ServiceSchema.static('getServicesShortByNames', async function (names) {
+  const services = await this.find().byNames(names).exec();
+  return services.map((service) => service.stringifyShort());
+})
+
+ServiceSchema.static('getServicesLongByNames', async function (names) {
+  const services = await this.find().byNames(names).exec();
+  return services.map((service) => service.stringifyLong());
+})
+
 ServiceSchema.method('stringifyShort', function (): string {
   return `${
     this.name
@@ -139,6 +149,8 @@ export type Statics = {
   getServiceNames(this: ServiceModel): Promise<string[]>;
   getServicesShort(this: ServiceModel): Promise<string[]>;
   getServicesLong(this: ServiceModel): Promise<string[]>;
+  getServicesShortByNames(this: ServiceModel, names: string[]): Promise<string[]>;
+  getServicesLongByNames(this: ServiceModel, names: string[]): Promise<string[]>;
 };
 export type Virtuals = {};
 type QWH<R = any> = QueryWithHelpers<R, ServiceDoc, QueryHelpers>;
