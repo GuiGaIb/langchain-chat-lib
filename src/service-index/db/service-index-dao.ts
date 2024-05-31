@@ -9,6 +9,7 @@ import {
   ConversationStageModel,
   ConversationStageSchema,
 } from './schemas/conversation-stage.schema.js';
+import { KnowledgeModel, KnowledgeSchema } from './schemas/knowledge.schema.js';
 
 checkEnv('LCCHAT_MONGO_URI');
 const uri = process.env.LCCHAT_MONGO_URI!;
@@ -28,5 +29,11 @@ export class ServiceIndexDAO {
     PredefinedMongooseModels.ConversationStage,
     ConversationStageSchema,
     PredefinedMongooseModels.ConversationStage + 's'
+  );
+
+  static Knowledge: KnowledgeModel = connection.model(
+    PredefinedMongooseModels.Knowledge,
+    KnowledgeSchema,
+    PredefinedMongooseModels.Knowledge + 's'
   );
 }
