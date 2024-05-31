@@ -171,9 +171,12 @@ export class MongoChatSessionMemory
       .limit(this.messageCountToSummarize)
       .exec();
 
-    const summarization = await summarizeChatMessages.invoke({
-      chat_history: mapStoredMessagesToChatMessages(messages),
-    });
+    const summarization = await summarizeChatMessages.invoke(
+      {
+        chat_history: mapStoredMessagesToChatMessages(messages),
+      },
+      { runName: 'summarize_chat_messages' }
+    );
 
     session.summary.push({
       createdAt: new Date(),
