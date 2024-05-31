@@ -1,7 +1,4 @@
-import {
-  Runnable,
-  RunnableMap,
-} from '@langchain/core/runnables';
+import { Runnable, RunnableMap } from '@langchain/core/runnables';
 
 import {
   MongoChatSessionMemory,
@@ -27,7 +24,7 @@ const stage_instructions = getConversationStage
 
 const possible_services_str = getPossibleServices
   .pipe((output) => output.possible_services)
-  .pipe(ServiceIndexDAO.Service.getServicesLongByNames);
+  .pipe((output) => ServiceIndexDAO.Service.getServicesLongByNames(output));
 
 const applicable_knowledge_str = knowledgeRetriever.pipe((output) =>
   output.join('\n')

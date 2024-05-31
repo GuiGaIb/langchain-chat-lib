@@ -32,58 +32,62 @@ export const ServiceSchema: ServiceSchema = new Schema(
   },
   {
     timestamps: true,
+    statics: {
+      async getServiceNames() {
+        const services = await this.find().exec();
+        const names = services.map((service) => service.name);
+        return Array.from(new Set(names));
+      },
+      async getServicesLong() {
+        const services = await this.find().exec();
+        return services.map(
+          (service) =>
+            `${service.name}: ${
+              service.long_description
+            }. Requirements: ${service.requirements
+              .map((v, i) => `${i + 1}: ${v}`)
+              .join(', ')}. Cost: ${service.cost}.`
+        );
+      },
+      async getServicesShort() {
+        const services = await this.find().exec();
+        return services.map(
+          (service) =>
+            `${service.name}: ${
+              service.short_description
+            }. Requirements: ${service.requirements
+              .map((v, i) => `${i + 1}: ${v}`)
+              .join(', ')}`
+        );
+      },
+      async getServicesLongByNames(names) {
+        const services = await this.find().where('name').in(names);
+        return services.map(
+          (service) =>
+            `${service.name}: ${
+              service.long_description
+            }. Requirements: ${service.requirements
+              .map((v, i) => `${i + 1}: ${v}`)
+              .join(', ')}. Cost: ${service.cost}.`
+        );
+      },
+      async getServicesShortByNames(names) {
+        const services = await this.find().where('name').in(names);
+        return services.map(
+          (service) =>
+            `${service.name}: ${
+              service.short_description
+            }. Requirements: ${service.requirements
+              .map((v, i) => `${i + 1}: ${v}`)
+              .join(', ')}`
+        );
+      },
+    },
   }
 );
 
 ServiceSchema.pre('save', function () {
   this.tags = normalizeTags(this.tags);
-});
-
-ServiceSchema.static(
-  'getServiceNames',
-  async function getServiceNames(): Promise<string[]> {
-    const services = await this.find().exec();
-    const names = services.map((service) => service.name);
-    return Array.from(new Set(names));
-  }
-);
-
-ServiceSchema.static(
-  'getServicesShort',
-  async function getServicesShort(): Promise<string[]> {
-    const services = await this.find().exec();
-    return services.map((service) => service.stringifyShort());
-  }
-);
-
-ServiceSchema.static(
-  'getServicesLong',
-  async function getServicesLong(): Promise<string[]> {
-    const services = await this.find().exec();
-    return services.map((service) => service.stringifyLong());
-  }
-);
-
-ServiceSchema.static('getServicesShortByNames', async function (names) {
-  const services = await this.find().byNames(names).exec();
-  return services.map((service) => service.stringifyShort());
-})
-
-ServiceSchema.static('getServicesLongByNames', async function (names) {
-  const services = await this.find().byNames(names).exec();
-  return services.map((service) => service.stringifyLong());
-})
-
-ServiceSchema.method('stringifyShort', function (): string {
-  return `${
-    this.name
-  }: ${this.short_description}. Requirements: ${this.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}`;
-});
-
-ServiceSchema.method('stringifyLong', function (): string {
-  return `${
-    this.name
-  }: ${this.long_description}. Requirements: ${this.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}. Cost: ${this.cost}.`;
 });
 
 ServiceSchema.query.byName = function (name) {
@@ -141,16 +145,19 @@ export type ServiceSchema = Schema<
   Required<ServiceShape>
 >;
 
-export type Methods = {
-  stringifyShort(this: ServiceDoc): string;
-  stringifyLong(this: ServiceDoc): string;
-};
+export type Methods = {};
 export type Statics = {
   getServiceNames(this: ServiceModel): Promise<string[]>;
   getServicesShort(this: ServiceModel): Promise<string[]>;
   getServicesLong(this: ServiceModel): Promise<string[]>;
-  getServicesShortByNames(this: ServiceModel, names: string[]): Promise<string[]>;
-  getServicesLongByNames(this: ServiceModel, names: string[]): Promise<string[]>;
+  getServicesShortByNames(
+    this: ServiceModel,
+    names: string[]
+  ): Promise<string[]>;
+  getServicesLongByNames(
+    this: ServiceModel,
+    names: string[]
+  ): Promise<string[]>;
 };
 export type Virtuals = {};
 type QWH<R = any> = QueryWithHelpers<R, ServiceDoc, QueryHelpers>;

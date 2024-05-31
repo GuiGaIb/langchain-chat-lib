@@ -10,7 +10,7 @@ import { ServiceIndexDAO } from '../../db/service-index-dao.js';
 import { LCRunOutput } from '../../../lib/utils/utility-types.js';
 
 const getDocumentsCatalog = RunnableLambda.from<any, string>(
-  ServiceIndexDAO.Knowledge.getCatalogStringified
+  () => ServiceIndexDAO.Knowledge.getCatalogStringified()
 ).withConfig({
   runName: 'get_documents_catalog',
 });

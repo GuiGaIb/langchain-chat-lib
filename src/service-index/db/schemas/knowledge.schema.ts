@@ -31,6 +31,37 @@ export const KnowledgeSchema: KnowledgeSchema = new Schema(
   },
   {
     timestamps: true,
+    statics: {
+      getCatalog(): Promise<
+        Pick<KnowledgeShape, 'name' | 'tags' | 'kind' | 'description'>[]
+      > {
+        return this.find(
+          {},
+          {
+            name: 1,
+            tags: 1,
+            kind: 1,
+            _id: 0,
+          }
+        ).exec();
+      },
+      async getCatalogStringified() {
+        const catalog = await this.find(
+          {},
+          {
+            name: 1,
+            tags: 1,
+            kind: 1,
+            _id: 0,
+          }
+        ).exec();
+        return catalog
+          .map(({ name, tags, kind, description }) => {
+            return `${name}: ${description}. Tags: ${tags.toString()}. Kind: ${kind}.`;
+          })
+          .join('\n');
+      },
+    },
   }
 );
 
@@ -40,31 +71,6 @@ Name: ${this.name}
 Content: ${this.content}
 <DOCUMENT END>`;
 });
-
-KnowledgeSchema.static('getCatalog', function (): Promise<
-  Pick<KnowledgeShape, 'name' | 'tags' | 'kind' | 'description'>[]
-> {
-  return this.find({})
-    .projection({
-      name: 1,
-      tags: 1,
-      kind: 1,
-      _id: 0,
-    })
-    .exec();
-});
-
-KnowledgeSchema.static(
-  'getCatalogStringified',
-  async function (): Promise<string> {
-    const catalog = await this.getCatalog();
-    return catalog
-      .map(({ name, tags, kind, description }) => {
-        return `${name}: ${description}. Tags: ${tags.toString()}. Kind: ${kind}.`;
-      })
-      .join('\n');
-  }
-);
 
 KnowledgeSchema.query.byNames = function (names): QWH<KnowledgeDoc[]> {
   return this.where('name').in(names);
