@@ -24,7 +24,9 @@ const _coerceMemory: RunnableFunc<
   return { memory };
 };
 
-const coerceMemory = new RunnableLambda({ func: _coerceMemory });
+const coerceMemory = new RunnableLambda({ func: _coerceMemory }).withConfig({
+  runName: 'coerceMemory',
+});
 
 const unpackMemory = RunnableMap.from<
   LCRunOutput<typeof coerceMemory>,
@@ -32,12 +34,12 @@ const unpackMemory = RunnableMap.from<
 >({
   memory: (input) => input.memory,
   chat_history: (input) => input.memory.getMessages(),
-});
+}).withConfig({ runName: 'unpackMemory' });
 
 export const unpackChatMemory: UnpackChatMemory = RunnableSequence.from([
   coerceMemory,
   unpackMemory,
-]);
+]).withConfig({ runName: 'unpackChatMemory' });
 
 export type UnpackChatMemory = Runnable<
   BaseChatMemory | { memory: BaseChatMemory },
@@ -66,7 +68,7 @@ const _coerceMemoryWithSummary: RunnableFunc<
 
 const coerceMemoryWithSummary = new RunnableLambda({
   func: _coerceMemoryWithSummary,
-});
+}).withConfig({ runName: 'coerceMemoryWithSummary' });
 
 const unpackMemoryWithSummary = RunnableMap.from<
   LCRunOutput<typeof coerceMemoryWithSummary>,
@@ -76,10 +78,13 @@ const unpackMemoryWithSummary = RunnableMap.from<
   chat_history: (input) => input.memory.getMessages(),
   chat_summary: (input) => input.memory.getSummary(),
   chat_summary_text: (input) => input.memory.getSummaryAsText(),
-});
+}).withConfig({ runName: 'unpackMemoryWithSummary' });
 
 export const unpackChatMemoryWithSummary: UnpackChatMemoryWithSummary =
-  RunnableSequence.from([coerceMemoryWithSummary, unpackMemoryWithSummary]);
+  RunnableSequence.from([
+    coerceMemoryWithSummary,
+    unpackMemoryWithSummary,
+  ]).withConfig({ runName: 'unpackChatMemoryWithSummary' });
 
 export type UnpackChatMemoryWithSummary = Runnable<
   ChatMemoryWithSummaryInput,
