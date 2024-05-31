@@ -44,3 +44,10 @@ export type WithRequiredAndNoOptional<
 export type OptionalKeys<T> = {
   [K in keyof T]-?: {} extends Pick<T, K> ? K : never;
 }[keyof T];
+
+/**
+ * A type that strips all optional properties from `T`.
+ *
+ * @template T - The object type to be modified.
+ */
+export type StripOptional<T> = Pick<T, Exclude<keyof T, OptionalKeys<T>>>;
