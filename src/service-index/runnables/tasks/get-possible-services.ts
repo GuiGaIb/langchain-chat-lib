@@ -10,7 +10,7 @@ const systemMessage = `Your job is to analyze the chat history between an user a
 
 The possible services are presented between the *** symbols:
 ***
-{services_str}
+{conversation_stages_str}
 ***
 
 To emit your response you must consider:
@@ -33,7 +33,7 @@ The most recent messages follow below:`;
 const promptTemplate = ChatPromptTemplate.fromMessages<{
   chat_summary_text: string;
   chat_history: BaseMessage[];
-  services_str: string;
+  conversation_stages_str: string;
 }>([
   ['system', systemMessage],
   ['system', summaryMessage],
