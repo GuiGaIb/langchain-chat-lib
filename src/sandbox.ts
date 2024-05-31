@@ -15,6 +15,9 @@ process.env['LANGCHAIN_ENDPOINT'] = 'https://api.smith.langchain.com';
 process.env['LANGCHAIN_TRACING_V2'] = 'true';
 process.env['LANGCHAIN_CALLBACKS_BACKGROUND'] = 'true';
 
+process.env['MESSAGE_DEBOUNCE_CLEANUP_TIME_MS'] = String(1000 * 60);
+process.env['MESSAGE_DEBOUNCE_TIME_MS'] = String(1000 * 5);
+
 // import { HumanMessage, AIMessage } from '@langchain/core/messages';
 
 // import { inputMap } from './lib/service-index/runnables/get-conversation-stage.js';
@@ -773,7 +776,6 @@ process.env['LANGCHAIN_CALLBACKS_BACKGROUND'] = 'true';
 // await ServiceIndexDAO.ConversationStage.db.close();
 /* ------------------------------------------------------------------------------------------------ */
 
-
 /* ------------------------------------------------------------------------------------------------ */
 // const { ServiceIndexDAO } = await import(
 //   './service-index/db/service-index-dao.js'
@@ -944,5 +946,69 @@ process.env['LANGCHAIN_CALLBACKS_BACKGROUND'] = 'true';
 // await ServiceIndexDAO.Knowledge.db.close();
 /* ------------------------------------------------------------------------------------------------ */
 
-
 /* ------------------------------------------------------------------------------------------------ */
+import { AIMessage, HumanMessage } from '@langchain/core/messages';
+import mongoose from 'mongoose';
+
+const { MongoChatSessionMemory } = await import(
+  './lib/memory/mongodb/mongo-chat-session-memory.js'
+);
+
+const memory = new MongoChatSessionMemory({
+  userId: 'test',
+  maxMessageCount: 10,
+  messageCountToSummarize: 5,
+  includeStaleSessions: false,
+});
+
+await memory.ChatMessage.deleteMany({ userId: memory.userId });
+await memory.Session.deleteMany({ userId: memory.userId });
+
+const { MemoryBackedDebouncer } = await import(
+  './lib/utils/memory-backed-debouncer.js'
+);
+
+const { CustomerServiceChain } = await import(
+  './service-index/runnables/chains/customer-service-chain.js'
+);
+
+const debouncer = MemoryBackedDebouncer.getInstance({
+  memory,
+  async onTrigger() {
+    const response = await CustomerServiceChain.invoke({
+      cs_rep_name: 'Paola Alcaráz',
+      company_name: 'MEXUS Migración',
+      company_business:
+        'Mexus Migración es una empresa mexicana enfocada en servicios migratorios para Estados Unidos y México',
+      maxMessageCount: 10,
+      messageCountToSummarize: 5,
+      userId: memory.userId,
+    });
+    await memory.addMessage(response);
+    console.log(response);
+  },
+  userId: memory.userId,
+});
+
+const messages = [
+  new HumanMessage('Hola'),
+  new AIMessage(
+    '¡Hola! Bienvenido a Mexus Migración, ¿en qué puedo ayudarte hoy?'
+  ),
+  new HumanMessage(
+    'Necesito una transmisión pa motor de un 2005 Ford Explorer 4.0'
+  ),
+];
+
+for (const message of messages) {
+  await debouncer.queueMessage(message);
+}
+
+await stall(10000).then(
+  async () =>
+    await Promise.all(mongoose.connections.map((conn) => conn.close()))
+);
+
+function stall(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
