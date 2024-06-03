@@ -59,7 +59,7 @@ export class MongoChatSessionMemory
     this.includeStaleSessions = fields.includeStaleSessions ?? false;
   }
 
-  private async getSession(): Promise<SessionDoc> {
+  async getSession(): Promise<SessionDoc> {
     if (this._session) {
       return this._session;
     }
