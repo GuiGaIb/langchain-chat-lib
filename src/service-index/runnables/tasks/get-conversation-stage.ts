@@ -4,6 +4,7 @@ import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from '@langchain/core/prompts';
+
 import { BaseOpenAI } from '../../models.js';
 
 const responseSchema = z.object({

@@ -1,4 +1,5 @@
 import { Runnable, RunnableMap } from '@langchain/core/runnables';
+import { AIMessage, BaseMessage } from '@langchain/core/messages';
 
 import {
   MongoChatSessionMemory,
@@ -12,7 +13,6 @@ import { getConversationStageInstructions } from '../tasks/get-conversation-stag
 import { getPossibleServices } from '../tasks/get-possible-services.js';
 import { ServiceIndexDAO } from '../../db/service-index-dao.js';
 import { knowledgeRetriever } from '../retrievers/knowledge-retriever.js';
-import { AIMessage, BaseMessage } from '@langchain/core/messages';
 import { generateResponse } from '../tasks/generate-response.js';
 
 const conversation_stages_str = getConversationStagesStringified.pipe(

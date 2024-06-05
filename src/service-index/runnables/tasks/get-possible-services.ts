@@ -4,6 +4,7 @@ import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from '@langchain/core/prompts';
+
 import { BaseOpenAI } from '../../models.js';
 
 const systemMessage = `Your job is to analyze the chat history between an user and a customer service representative and a list of available services, and determine which services mught be relevant to the user.

@@ -4,7 +4,6 @@ import {
   HydratedDocument,
   DefaultSchemaOptions,
 } from 'mongoose';
-import { stringify } from 'querystring';
 
 export const ConversationStageSchema: ConversationStageSchema = new Schema(
   {
