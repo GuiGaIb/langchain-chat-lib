@@ -24,6 +24,7 @@ export const CustomerServiceChain = RunnableMap.from({
     chat_summary: (input) => new MongoChatSessionMemory(input).getSummary(),
     chat_summary_text: (input) => new MongoChatSessionMemory(input).getSummaryAsText(),
     conversation_stages_str: getConversationStagesStringified.pipe((output) => output.conversation_stages_str),
+    available_services_str: (input) => ServiceIndexDAO.Service.getServicesShort().then((services) => services.join('\n')),
 })
     .pipe(RunnableMap.from({
     company_business: (input) => input.company_business,
