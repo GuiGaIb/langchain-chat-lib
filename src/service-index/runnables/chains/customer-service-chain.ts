@@ -41,6 +41,7 @@ export const CustomerServiceChain: CustomerServiceChain = RunnableMap.from<
     company_name: string;
     company_business: string;
     conversation_stages_str: string;
+    available_services_str: string;
   }
 >({
   company_business: (input) => input.company_business,
@@ -54,6 +55,10 @@ export const CustomerServiceChain: CustomerServiceChain = RunnableMap.from<
   conversation_stages_str: getConversationStagesStringified.pipe(
     (output) => output.conversation_stages_str
   ),
+  available_services_str: (input) =>
+    ServiceIndexDAO.Service.getServicesShort().then((services) =>
+      services.join('\n')
+    ),
 })
   .pipe(
     RunnableMap.from<
@@ -62,6 +67,7 @@ export const CustomerServiceChain: CustomerServiceChain = RunnableMap.from<
         company_name: string;
         company_business: string;
         conversation_stages_str: string;
+        available_services_str: string;
       },
       {
         cs_rep_name: string;

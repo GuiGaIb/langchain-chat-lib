@@ -9,9 +9,9 @@ import { BaseOpenAI } from '../../models.js';
 
 const systemMessage = `Your job is to analyze the chat history between an user and a customer service representative and a list of available services, and determine which services mught be relevant to the user.
 
-The possible services are presented between the *** symbols:
+The available services are presented between the *** symbols:
 ***
-{conversation_stages_str}
+{available_services_str}
 ***
 
 To emit your response you must consider:
@@ -34,7 +34,7 @@ The most recent messages follow below:`;
 const promptTemplate = ChatPromptTemplate.fromMessages<{
   chat_summary_text: string;
   chat_history: BaseMessage[];
-  conversation_stages_str: string;
+  available_services_str: string;
 }>([
   ['system', systemMessage],
   ['system', summaryMessage],
