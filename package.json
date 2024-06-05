@@ -1,6 +1,6 @@
 {
   "name": "langchain-chat-lib",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Utilities library for chat applications with LangChain",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

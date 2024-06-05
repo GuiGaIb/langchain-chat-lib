@@ -1,18 +1,28 @@
 import { BaseMessage } from '@langchain/core/messages';
 import { ChatMemoryWithSummary, Summary } from '../base.js';
-import { SessionModel } from './schemas/chat-session.schema.js';
+import { SessionDoc, SessionModel } from './schemas/chat-session.schema.js';
 import { ChatMessageModel } from './schemas/chat-message-schema.js';
 export declare class MongoChatSessionMemory extends ChatMemoryWithSummary implements Required<MongoChatSessionMemoryInput> {
     lc_namespace: string[];
-    Session: SessionModel;
-    ChatMessage: ChatMessageModel;
+    static Session: SessionModel;
+    static ChatMessage: ChatMessageModel;
+    static getChatsPreview(options: {
+        limit?: number;
+    }): Promise<{
+        from: string;
+        messages: {
+            text: string;
+            type: string;
+            timestamp: string;
+        }[];
+    }[]>;
     readonly userId: string;
     includeStaleSessions: boolean;
     maxMessageCount: number;
     messageCountToSummarize: number;
     private _session;
     constructor(fields: MongoChatSessionMemoryInput);
-    private getSession;
+    getSession(): Promise<SessionDoc>;
     private fetchUserMessages;
     private getUnsummarizedMessagesCount;
     getMessages(): Promise<BaseMessage[]>;

@@ -11,8 +11,33 @@ const uri = process.env.LCCHAT_MONGO_URI;
 const connection = await createConnection(uri).asPromise();
 export class MongoChatSessionMemory extends ChatMemoryWithSummary {
     lc_namespace = ['langchain', 'stores', 'message', 'mongo-chat-session'];
-    Session = connection.model(PredefinedMongooseModels.ChatSession, SessionSchema, PredefinedMongooseModels.ChatSession + 's');
-    ChatMessage = connection.model(PredefinedMongooseModels.ChatMessage, ChatMessageSchema, PredefinedMongooseModels.ChatMessage + 's');
+    static Session = connection.model(PredefinedMongooseModels.ChatSession, SessionSchema, PredefinedMongooseModels.ChatSession + 's');
+    static ChatMessage = connection.model(PredefinedMongooseModels.ChatMessage, ChatMessageSchema, PredefinedMongooseModels.ChatMessage + 's');
+    static async getChatsPreview(options) {
+        const { limit = 1000 } = options;
+        const messages = await this.ChatMessage.find()
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .exec();
+        let chats = {};
+        chats = messages.reduce((acc, message) => {
+            const userId = message.userId;
+            if (!acc[userId]) {
+                acc[userId] = [];
+            }
+            acc[userId].push({
+                text: message.data.content,
+                type: message.type,
+                timestamp: message.createdAt.toISOString(),
+            });
+            return acc;
+        }, chats);
+        const chatsArray = [];
+        for (const userId in chats) {
+            chatsArray.push({ from: userId, messages: chats[userId] });
+        }
+        return chatsArray;
+    }
     userId;
     includeStaleSessions;
     maxMessageCount;
@@ -32,13 +57,14 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
         const states = this.includeStaleSessions
             ? ['open', 'stale']
             : ['open'];
-        const sessions = await this.Session.find()
+        const sessions = await MongoChatSessionMemory.Session.find()
             .byUserId(this.userId)
             .byState(states)
             .newestFirst()
             .exec();
         const possibleSession = sessions.shift();
-        const session = possibleSession ?? (await this.Session.create({ userId: this.userId }));
+        const session = possibleSession ??
+            (await MongoChatSessionMemory.Session.create({ userId: this.userId }));
         this._session = session;
         return this._session;
     }
@@ -46,7 +72,7 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
         const { summarized = false } = options;
         const session = await this.getSession();
         const messageIds = session.messages;
-        return this.ChatMessage.find()
+        return MongoChatSessionMemory.ChatMessage.find()
             .where('_id')
             .in(messageIds)
             .where('userId')
@@ -70,7 +96,7 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
             ...mappedMessage,
             userId: this.userId,
         };
-        const storedMessage = await this.ChatMessage.create(shapedMessage);
+        const storedMessage = await MongoChatSessionMemory.ChatMessage.create(shapedMessage);
         session.messages.push(storedMessage._id);
         await session.save();
         const unsummarizedMessagesCount = await this.getUnsummarizedMessagesCount();
@@ -86,7 +112,7 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
             ...msg,
             userId: this.userId,
         }));
-        const storedMessages = await this.ChatMessage.insertMany(shapedMessages);
+        const storedMessages = await MongoChatSessionMemory.ChatMessage.insertMany(shapedMessages);
         session.messages.push(...storedMessages.map((msg) => msg._id));
         await session.save();
         const unsummarizedMessagesCount = await this.getUnsummarizedMessagesCount();
@@ -102,7 +128,7 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
     async summarizeMessages() {
         const session = await this.getSession();
         const messageIds = session.messages;
-        const messages = await this.ChatMessage.find()
+        const messages = await MongoChatSessionMemory.ChatMessage.find()
             .where('_id')
             .in(messageIds)
             .where('userId')
@@ -121,6 +147,6 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
         });
         await session.save();
         const summarizedMessageIds = messages.map((msg) => msg._id);
-        await this.ChatMessage.updateMany({ _id: { $in: summarizedMessageIds } }, { summarized: true });
+        await MongoChatSessionMemory.ChatMessage.updateMany({ _id: { $in: summarizedMessageIds } }, { summarized: true });
     }
 }
