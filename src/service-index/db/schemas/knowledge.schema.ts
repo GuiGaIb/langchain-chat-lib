@@ -52,6 +52,7 @@ export const KnowledgeSchema: KnowledgeSchema = new Schema(
             name: 1,
             tags: 1,
             kind: 1,
+            description: 1,
             _id: 0,
           }
         ).exec();
