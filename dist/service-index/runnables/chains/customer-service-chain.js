@@ -7,14 +7,24 @@ import { getPossibleServices } from '../tasks/get-possible-services.js';
 import { ServiceIndexDAO } from '../../db/service-index-dao.js';
 import { knowledgeRetriever } from '../retrievers/knowledge-retriever.js';
 import { generateResponse } from '../tasks/generate-response.js';
-const conversation_stages_str = getConversationStagesStringified.pipe((output) => output.conversation_stages_str);
+const conversation_stages_str = getConversationStagesStringified
+    .pipe((output) => output.conversation_stages_str)
+    .withConfig({ runName: 'conversation_stages_str' });
 const stage_instructions = getConversationStage
     .pipe(getConversationStageInstructions)
-    .pipe((output) => output.stage_instructions);
+    .pipe((output) => output.stage_instructions)
+    .withConfig({ runName: 'stage_instructions' });
 const possible_services_str = getPossibleServices
     .pipe((output) => output.possible_services)
-    .pipe((output) => ServiceIndexDAO.Service.getServicesLongByNames(output));
-const applicable_knowledge_str = knowledgeRetriever.pipe((output) => output.join('\n'));
+    .pipe((output) => ServiceIndexDAO.Service.getServicesLongByNames(output))
+    .withConfig({
+    runName: 'possible_services_str',
+});
+const applicable_knowledge_str = knowledgeRetriever
+    .pipe((output) => output.join('\n'))
+    .withConfig({
+    runName: 'applicable_knowledge_str',
+});
 export const CustomerServiceChain = RunnableMap.from({
     company_business: (input) => input.company_business,
     company_name: (input) => input.company_name,
