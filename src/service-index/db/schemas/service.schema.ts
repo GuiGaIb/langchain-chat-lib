@@ -42,44 +42,44 @@ export const ServiceSchema: ServiceSchema = new Schema(
         const services = await this.find().exec();
         return services.map(
           (service) =>
-            `${service.name}: ${
-              service.long_description
-            }. Requirements: ${service.requirements
-              .map((v, i) => `${i + 1}: ${v}`)
-              .join(', ')}. Cost: ${service.cost}.`
+            `-----
+Name: ${service.name}
+Description: ${service.long_description}
+Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+Cost: ${service.cost}
+------`
         );
       },
       async getServicesShort() {
         const services = await this.find().exec();
         return services.map(
           (service) =>
-            `${service.name}: ${
-              service.short_description
-            }. Requirements: ${service.requirements
-              .map((v, i) => `${i + 1}: ${v}`)
-              .join(', ')}`
+            `-----
+Name: ${service.name}
+Description: ${service.short_description}
+Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+------`
         );
       },
       async getServicesLongByNames(names) {
-        const services = await this.find().where('name').in(names);
+        const services = await this.find().where('name').in(names).exec();
         return services.map(
-          (service) =>
-            `${service.name}: ${
-              service.long_description
-            }. Requirements: ${service.requirements
-              .map((v, i) => `${i + 1}: ${v}`)
-              .join(', ')}. Cost: ${service.cost}.`
+          (service) => `-----
+Name: ${service.name}
+Description: ${service.long_description}
+Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+Cost: ${service.cost}
+------`
         );
       },
       async getServicesShortByNames(names) {
-        const services = await this.find().where('name').in(names);
+        const services = await this.find().where('name').in(names).exec();
         return services.map(
-          (service) =>
-            `${service.name}: ${
-              service.short_description
-            }. Requirements: ${service.requirements
-              .map((v, i) => `${i + 1}: ${v}`)
-              .join(', ')}`
+          (service) => `-----
+Name: ${service.name}
+Description: ${service.short_description}
+Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+------`
         );
       },
     },

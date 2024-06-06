@@ -30,27 +30,37 @@ export const ServiceSchema = new Schema({
         },
         async getServicesLong() {
             const services = await this.find().exec();
-            return services.map((service) => `${service.name}: ${service.long_description}. Requirements: ${service.requirements
-                .map((v, i) => `${i + 1}: ${v}`)
-                .join(', ')}. Cost: ${service.cost}.`);
+            return services.map((service) => `-----
+Name: ${service.name}
+Description: ${service.long_description}
+Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+Cost: ${service.cost}
+------`);
         },
         async getServicesShort() {
             const services = await this.find().exec();
-            return services.map((service) => `${service.name}: ${service.short_description}. Requirements: ${service.requirements
-                .map((v, i) => `${i + 1}: ${v}`)
-                .join(', ')}`);
+            return services.map((service) => `-----
+Name: ${service.name}
+Description: ${service.short_description}
+Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+------`);
         },
         async getServicesLongByNames(names) {
-            const services = await this.find().where('name').in(names);
-            return services.map((service) => `${service.name}: ${service.long_description}. Requirements: ${service.requirements
-                .map((v, i) => `${i + 1}: ${v}`)
-                .join(', ')}. Cost: ${service.cost}.`);
+            const services = await this.find().where('name').in(names).exec();
+            return services.map((service) => `-----
+Name: ${service.name}
+Description: ${service.long_description}
+Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+Cost: ${service.cost}
+------`);
         },
         async getServicesShortByNames(names) {
-            const services = await this.find().where('name').in(names);
-            return services.map((service) => `${service.name}: ${service.short_description}. Requirements: ${service.requirements
-                .map((v, i) => `${i + 1}: ${v}`)
-                .join(', ')}`);
+            const services = await this.find().where('name').in(names).exec();
+            return services.map((service) => `-----
+Name: ${service.name}
+Description: ${service.short_description}
+Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+------`);
         },
     },
 });
