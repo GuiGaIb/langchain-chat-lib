@@ -55,7 +55,7 @@ export const SessionSchema: SessionSchema = new Schema(
         return this.find({ userId });
       },
       newestFirst() {
-        return this.sort({ createdAt: -1 });
+        return this.sort({ updatedAt: -1 });
       },
     },
   }
