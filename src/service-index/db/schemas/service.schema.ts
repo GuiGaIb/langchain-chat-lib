@@ -47,18 +47,7 @@ Name: ${service.name}
 Description: ${service.long_description}
 Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
 Cost: ${service.cost}
-------`
-        );
-      },
-      async getServicesShort() {
-        const services = await this.find().exec();
-        return services.map(
-          (service) =>
-            `-----
-Name: ${service.name}
-Description: ${service.short_description}
-Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
-------`
+-----`
         );
       },
       async getServicesLongByNames(names) {
@@ -69,7 +58,19 @@ Name: ${service.name}
 Description: ${service.long_description}
 Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
 Cost: ${service.cost}
-------`
+-----`
+        );
+      },
+      async getServicesShort() {
+        const services = await this.find().exec();
+        return services.map(
+          (service) =>
+            `-----
+Name: ${service.name}
+Description: ${service.short_description}
+Requirements: ${service.requirements}
+Tags: ${service.tags}
+-----`
         );
       },
       async getServicesShortByNames(names) {
@@ -78,8 +79,9 @@ Cost: ${service.cost}
           (service) => `-----
 Name: ${service.name}
 Description: ${service.short_description}
-Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
-------`
+Requirements: ${service.requirements}
+Tags: ${service.tags}
+-----`
         );
       },
     },

@@ -35,15 +35,7 @@ Name: ${service.name}
 Description: ${service.long_description}
 Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
 Cost: ${service.cost}
-------`);
-        },
-        async getServicesShort() {
-            const services = await this.find().exec();
-            return services.map((service) => `-----
-Name: ${service.name}
-Description: ${service.short_description}
-Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
-------`);
+-----`);
         },
         async getServicesLongByNames(names) {
             const services = await this.find().where('name').in(names).exec();
@@ -52,15 +44,25 @@ Name: ${service.name}
 Description: ${service.long_description}
 Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
 Cost: ${service.cost}
-------`);
+-----`);
+        },
+        async getServicesShort() {
+            const services = await this.find().exec();
+            return services.map((service) => `-----
+Name: ${service.name}
+Description: ${service.short_description}
+Requirements: ${service.requirements}
+Tags: ${service.tags}
+-----`);
         },
         async getServicesShortByNames(names) {
             const services = await this.find().where('name').in(names).exec();
             return services.map((service) => `-----
 Name: ${service.name}
 Description: ${service.short_description}
-Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
-------`);
+Requirements: ${service.requirements}
+Tags: ${service.tags}
+-----`);
         },
     },
 });
