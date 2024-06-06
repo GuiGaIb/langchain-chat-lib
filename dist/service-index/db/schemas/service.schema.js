@@ -33,7 +33,7 @@ export const ServiceSchema = new Schema({
             return services.map((service) => `-----
 Name: ${service.name}
 Description: ${service.long_description}
-Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+Requirements: ${service.requirements.toString()}
 Cost: ${service.cost}
 -----`);
         },
@@ -42,7 +42,7 @@ Cost: ${service.cost}
             return services.map((service) => `-----
 Name: ${service.name}
 Description: ${service.long_description}
-Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+Requirements: ${service.requirements.toString()}
 Cost: ${service.cost}
 -----`);
         },
@@ -51,8 +51,8 @@ Cost: ${service.cost}
             return services.map((service) => `-----
 Name: ${service.name}
 Description: ${service.short_description}
-Requirements: ${service.requirements}
-Tags: ${service.tags}
+Requirements: ${service.requirements.toString()}
+Tags: ${service.tags.toString()}
 -----`);
         },
         async getServicesShortByNames(names) {
@@ -60,8 +60,8 @@ Tags: ${service.tags}
             return services.map((service) => `-----
 Name: ${service.name}
 Description: ${service.short_description}
-Requirements: ${service.requirements}
-Tags: ${service.tags}
+Requirements: ${service.requirements.toString()}
+Tags: ${service.tags.toString()}
 -----`);
         },
     },

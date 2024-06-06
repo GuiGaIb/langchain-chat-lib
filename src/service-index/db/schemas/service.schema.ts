@@ -45,7 +45,7 @@ export const ServiceSchema: ServiceSchema = new Schema(
             `-----
 Name: ${service.name}
 Description: ${service.long_description}
-Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+Requirements: ${service.requirements.toString()}
 Cost: ${service.cost}
 -----`
         );
@@ -56,7 +56,7 @@ Cost: ${service.cost}
           (service) => `-----
 Name: ${service.name}
 Description: ${service.long_description}
-Requirements: ${service.requirements.map((v, i) => `${i + 1}: ${v}`).join(', ')}
+Requirements: ${service.requirements.toString()}
 Cost: ${service.cost}
 -----`
         );
@@ -68,8 +68,8 @@ Cost: ${service.cost}
             `-----
 Name: ${service.name}
 Description: ${service.short_description}
-Requirements: ${service.requirements}
-Tags: ${service.tags}
+Requirements: ${service.requirements.toString()}
+Tags: ${service.tags.toString()}
 -----`
         );
       },
@@ -79,8 +79,8 @@ Tags: ${service.tags}
           (service) => `-----
 Name: ${service.name}
 Description: ${service.short_description}
-Requirements: ${service.requirements}
-Tags: ${service.tags}
+Requirements: ${service.requirements.toString()}
+Tags: ${service.tags.toString()}
 -----`
         );
       },
