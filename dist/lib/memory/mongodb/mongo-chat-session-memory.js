@@ -42,7 +42,6 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
     includeStaleSessions;
     maxMessageCount;
     messageCountToSummarize;
-    _session = null;
     constructor(fields) {
         super(fields);
         this.userId = fields.userId;
@@ -51,9 +50,6 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
         this.includeStaleSessions = fields.includeStaleSessions ?? false;
     }
     async getSession() {
-        if (this._session) {
-            return this._session;
-        }
         const states = this.includeStaleSessions
             ? ['open', 'stale']
             : ['open'];
@@ -65,8 +61,13 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
         const possibleSession = sessions.shift();
         const session = possibleSession ??
             (await MongoChatSessionMemory.Session.create({ userId: this.userId }));
-        this._session = session;
-        return this._session;
+        if (sessions.length) {
+            await Promise.all(sessions.map((s) => {
+                s.state = 'closed';
+                return s.save();
+            }));
+        }
+        return session;
     }
     async fetchUserMessages(options = {}) {
         const { summarized = false } = options;

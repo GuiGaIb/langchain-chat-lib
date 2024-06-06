@@ -83,7 +83,6 @@ export class MongoChatSessionMemory
   includeStaleSessions: boolean;
   maxMessageCount: number;
   messageCountToSummarize: number;
-  private _session: SessionDoc | null = null;
 
   constructor(fields: MongoChatSessionMemoryInput) {
     super(fields);
@@ -94,10 +93,6 @@ export class MongoChatSessionMemory
   }
 
   async getSession(): Promise<SessionDoc> {
-    if (this._session) {
-      return this._session;
-    }
-
     const states: SessionState[] = this.includeStaleSessions
       ? ['open', 'stale']
       : ['open'];
@@ -114,9 +109,14 @@ export class MongoChatSessionMemory
       possibleSession ??
       (await MongoChatSessionMemory.Session.create({ userId: this.userId }));
 
-    this._session = session;
+    if (sessions.length) {
+      await Promise.all(sessions.map((s) => {
+        s.state = 'closed';
+        return s.save();
+      }));
+    }
 
-    return this._session;
+    return session;
   }
 
   private async fetchUserMessages(

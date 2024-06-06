@@ -20,7 +20,6 @@ export declare class MongoChatSessionMemory extends ChatMemoryWithSummary implem
     includeStaleSessions: boolean;
     maxMessageCount: number;
     messageCountToSummarize: number;
-    private _session;
     constructor(fields: MongoChatSessionMemoryInput);
     getSession(): Promise<SessionDoc>;
     private fetchUserMessages;
