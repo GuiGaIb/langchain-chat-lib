@@ -15,6 +15,10 @@ export const ChatMessageSchema = new Schema({
         index: true,
         immutable: true,
     },
+    fbMediaRefPath: {
+        $type: String,
+        required: false,
+    },
 }, {
     timestamps: true,
     typeKey: '$type',
