@@ -1,5 +1,5 @@
-import { BaseListChatMessageHistory } from '@langchain/core/chat_history';
 import { BaseMessage } from '@langchain/core/messages';
+import { BaseChatMemory } from '../memory/base.js';
 export declare class MemoryBackedDebouncer implements MemoryBackedDebouncerInput {
     /**
      * Static instances map to keep track of all instances of MemoryBackedDebouncer.
@@ -30,7 +30,7 @@ export declare class MemoryBackedDebouncer implements MemoryBackedDebouncerInput
     /**
      * {@link BaseListChatMessageHistory} instance to store messages.
      */
-    readonly memory: BaseListChatMessageHistory;
+    readonly memory: BaseChatMemory;
     /**
      * User ID for which the instance is created.
      */
@@ -72,7 +72,7 @@ export declare class MemoryBackedDebouncer implements MemoryBackedDebouncerInput
      * Add a message to the memory and trigger the debouncer.
      * @param message - {@link BaseMessage}
      */
-    queueMessage(message: BaseMessage): Promise<void>;
+    queueMessage(message: BaseMessage, fbMediaRefPath?: string): Promise<void>;
     /**
      * Setup the debouncer with the provided configuration. If the instance is already initialized, it will be torn down and re-initialized.
      * @param config
@@ -88,7 +88,7 @@ export declare class MemoryBackedDebouncer implements MemoryBackedDebouncerInput
     terminate(): void;
 }
 export interface MemoryBackedDebouncerInput {
-    memory: BaseListChatMessageHistory;
+    memory: BaseChatMemory;
     userId: string;
 }
 export interface MemoryBackedDebouncerConfig {

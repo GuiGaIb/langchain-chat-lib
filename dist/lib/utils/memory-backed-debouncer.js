@@ -108,8 +108,8 @@ export class MemoryBackedDebouncer {
      * Add a message to the memory and trigger the debouncer.
      * @param message - {@link BaseMessage}
      */
-    async queueMessage(message) {
-        await this.memory.addMessage(message);
+    async queueMessage(message, fbMediaRefPath) {
+        await this.memory.addMessage(message, fbMediaRefPath);
         this.trigger$.next();
         if (this.cleanupTimeout) {
             clearTimeout(this.cleanupTimeout);

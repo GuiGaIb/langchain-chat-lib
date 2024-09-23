@@ -3,6 +3,7 @@ import { BaseListChatMessageHistory } from '@langchain/core/chat_history';
 import { BaseMessage } from '@langchain/core/messages';
 
 import { getOptionalNumEnv } from '../config/env.js';
+import { BaseChatMemory } from '../memory/base.js';
 
 export class MemoryBackedDebouncer implements MemoryBackedDebouncerInput {
   /**
@@ -84,7 +85,7 @@ export class MemoryBackedDebouncer implements MemoryBackedDebouncerInput {
   /**
    * {@link BaseListChatMessageHistory} instance to store messages.
    */
-  readonly memory: BaseListChatMessageHistory;
+  readonly memory: BaseChatMemory;
 
   /**
    * User ID for which the instance is created.
@@ -146,8 +147,11 @@ export class MemoryBackedDebouncer implements MemoryBackedDebouncerInput {
    * Add a message to the memory and trigger the debouncer.
    * @param message - {@link BaseMessage}
    */
-  async queueMessage(message: BaseMessage): Promise<void> {
-    await this.memory.addMessage(message);
+  async queueMessage(
+    message: BaseMessage,
+    fbMediaRefPath?: string
+  ): Promise<void> {
+    await this.memory.addMessage(message, fbMediaRefPath);
     this.trigger$.next();
     if (this.cleanupTimeout) {
       clearTimeout(this.cleanupTimeout);
@@ -209,7 +213,7 @@ export class MemoryBackedDebouncer implements MemoryBackedDebouncerInput {
 
 // Types
 export interface MemoryBackedDebouncerInput {
-  memory: BaseListChatMessageHistory;
+  memory: BaseChatMemory;
   userId: string;
 }
 

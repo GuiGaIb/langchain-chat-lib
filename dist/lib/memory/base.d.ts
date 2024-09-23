@@ -1,4 +1,5 @@
 import { BaseListChatMessageHistory } from '@langchain/core/chat_history';
+import { BaseMessage } from '@langchain/core/messages';
 /**
  * Abstract class for chat memory that includes an `userId` property. All chat memory classes should extend this class.
  *
@@ -11,6 +12,10 @@ export declare abstract class BaseChatMemory extends BaseListChatMessageHistory 
      * This property's type is restricted to `string` or `number` to ensure that it can be used as a key in a map.
      */
     abstract userId: string | number;
+    abstract addMessage(message: BaseMessage, fbMediaRefPath?: string): Promise<void>;
+    abstract addMessages(messages: (BaseMessage & {
+        fbMediaRefPath?: string;
+    })[]): Promise<void>;
 }
 /**
  * Abstract class for chat memory that includes a summary of the conversation and methods to get and update the summary.
