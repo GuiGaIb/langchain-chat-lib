@@ -18,6 +18,10 @@ export const ChatMessageSchema: ChatMessageSchema = new Schema(
       index: true,
       immutable: true,
     },
+    fbMediaRefPath: {
+      $type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,
@@ -28,6 +32,7 @@ export const ChatMessageSchema: ChatMessageSchema = new Schema(
 export type ChatMessageShape = StoredMessage & {
   summarized?: boolean;
   userId: string;
+  fbMediaRefPath?: string;
 
   _id?: Types.ObjectId;
   createdAt?: Date;
