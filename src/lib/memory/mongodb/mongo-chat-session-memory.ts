@@ -110,10 +110,12 @@ export class MongoChatSessionMemory
       (await MongoChatSessionMemory.Session.create({ userId: this.userId }));
 
     if (sessions.length) {
-      await Promise.all(sessions.map((s) => {
-        s.state = 'closed';
-        return s.save();
-      }));
+      await Promise.all(
+        sessions.map((s) => {
+          s.state = 'closed';
+          return s.save();
+        })
+      );
     }
 
     return session;
@@ -146,12 +148,16 @@ export class MongoChatSessionMemory
     return mapStoredMessagesToChatMessages(messages);
   }
 
-  async addMessage(message: BaseMessage): Promise<void> {
+  async addMessage(
+    message: BaseMessage,
+    fbMediaRefPath?: string
+  ): Promise<void> {
     const session = await this.getSession();
     const mappedMessage = mapChatMessagesToStoredMessages([message])[0];
     const shapedMessage: ChatMessageShape = {
       ...mappedMessage,
       userId: this.userId,
+      fbMediaRefPath,
     };
     const storedMessage = await MongoChatSessionMemory.ChatMessage.create(
       shapedMessage
@@ -168,12 +174,18 @@ export class MongoChatSessionMemory
     }
   }
 
-  async addMessages(messages: BaseMessage[]): Promise<void> {
+  async addMessages(
+    messages: (BaseMessage & { fbMediaRefPath?: string })[]
+  ): Promise<void> {
     const session = await this.getSession();
-    const mappedMessages = mapChatMessagesToStoredMessages(messages);
+    const mappedMessages = messages.map((msg) => ({
+      ...mapChatMessagesToStoredMessages([msg])[0],
+      fbMediaRefPath: msg.fbMediaRefPath,
+    }));
     const shapedMessages: ChatMessageShape[] = mappedMessages.map((msg) => ({
       ...msg,
       userId: this.userId,
+      fbMediaRefPath: msg.fbMediaRefPath,
     }));
     const storedMessages = await MongoChatSessionMemory.ChatMessage.insertMany(
       shapedMessages

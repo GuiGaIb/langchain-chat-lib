@@ -90,12 +90,13 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
         const messages = await this.fetchUserMessages();
         return mapStoredMessagesToChatMessages(messages);
     }
-    async addMessage(message) {
+    async addMessage(message, fbMediaRefPath) {
         const session = await this.getSession();
         const mappedMessage = mapChatMessagesToStoredMessages([message])[0];
         const shapedMessage = {
             ...mappedMessage,
             userId: this.userId,
+            fbMediaRefPath,
         };
         const storedMessage = await MongoChatSessionMemory.ChatMessage.create(shapedMessage);
         session.messages.push(storedMessage._id);
@@ -108,10 +109,14 @@ export class MongoChatSessionMemory extends ChatMemoryWithSummary {
     }
     async addMessages(messages) {
         const session = await this.getSession();
-        const mappedMessages = mapChatMessagesToStoredMessages(messages);
+        const mappedMessages = messages.map((msg) => ({
+            ...mapChatMessagesToStoredMessages([msg])[0],
+            fbMediaRefPath: msg.fbMediaRefPath,
+        }));
         const shapedMessages = mappedMessages.map((msg) => ({
             ...msg,
             userId: this.userId,
+            fbMediaRefPath: msg.fbMediaRefPath,
         }));
         const storedMessages = await MongoChatSessionMemory.ChatMessage.insertMany(shapedMessages);
         session.messages.push(...storedMessages.map((msg) => msg._id));

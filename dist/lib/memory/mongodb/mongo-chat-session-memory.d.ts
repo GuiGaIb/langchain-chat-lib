@@ -25,8 +25,10 @@ export declare class MongoChatSessionMemory extends ChatMemoryWithSummary implem
     private fetchUserMessages;
     private getUnsummarizedMessagesCount;
     getMessages(): Promise<BaseMessage[]>;
-    addMessage(message: BaseMessage): Promise<void>;
-    addMessages(messages: BaseMessage[]): Promise<void>;
+    addMessage(message: BaseMessage, fbMediaRefPath?: string): Promise<void>;
+    addMessages(messages: (BaseMessage & {
+        fbMediaRefPath?: string;
+    })[]): Promise<void>;
     getSummary(): Promise<Summary>;
     summarizeMessages(): Promise<void>;
 }
